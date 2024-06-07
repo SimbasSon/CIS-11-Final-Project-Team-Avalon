@@ -75,7 +75,6 @@ CALCULATE_AVERAGE
     ST R7, SAVE_R7        ; Save R7 (return address)
 
     LD R6, #5            ; Load divisor (5)
-    SR R2, R2, #2         ; Right shift SUM by 2 to divide by 4
     ADD R2, R2, R2        ; Add SUM to itself to get /2
     ADD R2, R2, R2        ; Add SUM to itself to get /1 
     
@@ -83,13 +82,9 @@ CALCULATE_AVERAGE
     RET                   ; Return (AVERAGE is in R2)
 
 
-
-
-
-
 DETERMINE_GRADE
 
-ST R7, SAVE_R7	; Save R7 (return address)
+ST R7, SAVE_R7		; Save R7 (return address)
 
 LD R0, R2		; Load AVERAGE(R2) into R0
 
@@ -110,7 +105,7 @@ ADD R0, R0,  #15
 ADD R0, R0,  #5
 NOT R0, R0
 BRzp	GRADE_B	; Branches to GRADE_B
-
+ay 
 ADD R0, R0,  #15	;Load #-70 into R0  w/2’s complement and check  avg >=70
 ADD R0, R0,  #15
 ADD R0, R0,  #15
@@ -159,66 +154,79 @@ GRADE_F
 	ST R0, LETTER_GRADE		;Store grade in LETTER_GRADE
 	RET
 
-
-
 DISPLAY_RESULTS
+    ST R7, SAVE_R7        ; Save R7 (return address)
 
-;MIN result
-LEA R0, MIN_RESULT 	;Loads address of Min
-PUTS				;Display 
-LDR R0, R3			;Loads min score from R3
-OUT				;Display Min
+    ; Display Minimum
+    LEA R0, MIN_RESULT     ; Load address of "Min: " message
+    PUTS                  ; Display the message
+    LD R0, 0             ; Load minimum score from R3
+    ADD R0, R0, #0       ; Convert score to ASCII ('0' offset)
+    OUT                   ; Display the minimum score
+
+    LD R0, NEWLINE        ; Load newline character
+    OUT                   ; Display newline
+
+    ; Display Maximum
+    LEA R0, MAX_RESULT     ; Load address of "Max: " message
+    PUTS                  ; Display the message
+    LD R0, 100             ; Load maximum score from R4
+    ADD R0, R0, #0       ; Convert score to ASCII
+    OUT                   ; Display the maximum score
+
+    LD R0, NEWLINE        ; Load newline character
+    OUT                   ; Display newline
+
+    ; Display Average
+    LEA R0, AVG_RESULT     ; Load address of "Avg: " message
+    PUTS                  ; Display the message
+    LD R0, R2             ; Load average score from R2
+    ADD R0, R0, #0       ; Convert score to ASCII
+    OUT                   ; Display the average score
+
+    LD R0, NEWLINE        ; Load newline character
+    OUT                   ; Display newline
+
+    ; Display Grade
+    LEA R0, GRD_RESULT     ; Load address of "Grade: " message
+    PUTS                  ; Display the message
+    LD R0, LETTER_GRADE    ; Load letter grade
+    OUT                   ; Display the letter grade
+
+    LD R0, NEWLINE        ; Load newline character
+    OUT                   ; Display newline
 
 
-;Max result
-LEA R0, MAX_RESULT 	;Loads address of Max
-PUTS				;Display 
-LDR R0, R4			;Loads max score from R4
-OUT 				;Display Max                                         
-
-;Average result
-LEA R0, AVG_RESULT 	;Loads address of Max
-PUTS				;Display 
-LDR R0, R2			;Loads avg score from R2
-OUT 				;Display Average 
-
-;Grade result
-LEA R0, GRD_RESULT 	;Loads address of Grade
-PUTS				;Display 
-LDR R0, LETTER_GRADE	;Loads letter grade
-OUT 				;Display Grade 
-
-LD R7, SAVE_R7        ; Restore R7
-RET                  	 ; Return 
-
-
+    LD R7, SAVE_R7        ; Restore R7
+    RET                   ; Return
 
 
 ; ------------- Data Section -------------
 
-SCORES_START_1 .FILL x4000   ; Address of first score
+SCORES_START_1 .FILL x4000   			; Address of first score
 SCORES_START_2 .FILL x4001
 SCORES_START_3 .FILL x4002
 SCORES_START_4 .FILL x4003
 SCORES_START_5 .FILL x4004
-MIN_INIT        .FILL xFF    ; High initial value
-MAX_INIT       .FILL x00    ; Low initial value
+MIN_INIT       .FILL xFF   		        ; High initial value
+MAX_INIT       .FILL x00       			; Low initial value
 
-SAVE_R7        .BLKW #1        ; Space to save R7
-PROMPT         .STRINGZ "Enter 5 scores:\n"
+SAVE_R7        .BLKW #1       		        ; Space to save R7
+PROMPT         .STRINGZ        "Enter 5 scores:\n"
 NEWLINE        .FILL x0A
 
-LETTER_GRADE_A	.FILL x41	;ASCII x code for letters A-F
+LETTER_GRADE_A	.FILL x41			;ASCII x code for letters A-F
 LETTER_GRADE_B	.FILL x42
 LETTER_GRADE_C	.FILL x43
 LETTER_GRADE_D	.FILL x44
 LETTER_GRADE_F	.FILL x46
-LETTER_GRADE 	.BLKW 	;Space for letter grade
+LETTER_GRADE 	.BLKW 1				;Space for letter grade
 
-MIN_RESULT		.STRINGZ	“Min: “		;Display Min result
-MAX_RESULT	.STRINGZ	“Max: “		;Display Max result
-AVG_RESULT		.STRINGZ	“Avg: “		;Display Average result
-GRD_RESULT	.STRINGZ	“Grade: “	;Display Letter Grade result
+MIN_RESULT	.STRINGZ	"Min: "		;Display Min result
+MAX_RESULT	.STRINGZ	"Max: "		;Display Max result
+AVG_RESULT	.STRINGZ	"Avg: "		;Display Average result
+GRD_RESULT	.STRINGZ	"Grade: "	;Display Letter Grade result
 
 
 .END
+
