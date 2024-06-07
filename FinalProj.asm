@@ -86,7 +86,7 @@ DETERMINE_GRADE
 
 ST R7, SAVE_R7		; Save R7 (return address)
 
-LD R0, R2		; Load AVERAGE(R2) into R0
+ADD R0, R2 #0		; Copy AVERAGE(R2) into R0
 
 ADD R0, R0,  #15	;Load #-90 into R0  w/2’s complement and check avg >=90
 ADD R0, R0,  #15
@@ -180,7 +180,7 @@ DISPLAY_RESULTS
     ; Display Average
     LEA R0, AVG_RESULT     ; Load address of "Avg: " message
     PUTS                  ; Display the message
-    LD R0, R2             ; Load average score from R2
+    ADD R0, R2, #0             ; Load average score from R2
     ADD R0, R0, #0       ; Convert score to ASCII
     OUT                   ; Display the average score
 
